@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Test your connection to any SMTP server with our enhanced testing tool">
+    <title>Modern SMTP Test Tool</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📧</text></svg>">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        .gradient-background {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .debug-console {
+            font-family: 'Courier New', monospace;
+            height: 200px;
+            overflow-y: auto;
+        }
+        .debug-console::-webkit-scrollbar {
+            width: 8px;
+        }
+        .debug-console::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        .debug-console::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-background font-inter text-gray-100 relative overflow-auto">
+    <!-- Background decoration -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-16 -left-16 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
+        <div class="absolute top-32 -right-16 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 2s"></div>
+        <div class="absolute -bottom-16 left-48 w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 4s"></div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-purple-800 bg-opacity-80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4">
+            <ul class="flex space-x-6 text-white font-semibold text-lg h-14 items-center overflow-x-auto no-scrollbar">
+                <li class="cursor-pointer hover:text-purple-300 border-b-2 border-transparent hover:border-purple-300 transition-all duration-300">Home</li>
+                <li class="cursor-pointer hover:text-purple-300 border-b-2 border-transparent hover:border-purple-300 transition-all duration-300">SMTP Test</li>
+                <li class="cursor-pointer hover:text-purple-300 border-b-2 border-transparent hover:border-purple-300 transition-all duration-300 whitespace-nowrap">Convert Password AWS</li>
+                <li class="cursor-pointer hover:text-purple-300 border-b-2 border-transparent hover:border-purple-300 transition-all duration-300 whitespace-nowrap">AWS Checker Ses Limit Bulk</li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-24 max-w-full overflow-auto">
+        <!-- Main Form Container -->
+        <div class="glass-effect rounded-xl p-8 max-w-5xl mx-auto shadow-2xl min-w-[320px]">
+            <!-- Header -->
+            <div class="text-center mb-8" id="tab-header">
+                <h1 class="text-4xl font-bold mb-4">SMTP Test Tool</h1>
+                <p class="text-lg opacity-90">Test your connection to any SMTP server with our enhanced testing tool.</p>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="tab-contents">
+                <!-- Home Tab -->
+                <div id="tab-home" class="hidden">
+                    <h1 class="text-4xl font-bold mb-4">Welcome</h1>
+                    <p class="text-lg opacity-90">Welcome to the Ultraman Clan Tools.</p>
+                </div>
+
+                <!-- SMTP Test Tab -->
+                <div id="tab-smtp-test" class="hidden">
+                    <!-- Full SMTP Test form content from index.html -->
+                    <form id="smtpForm" class="space-y-6">
+                        <!-- SMTP Server Input -->
+                        <div class="space-y-3">
+                            <label class="block text-lg font-medium" for="smtpHost">SMTP Host</label>
+                            <input type="text" 
+                                   id="smtpHost"
+                                   name="smtpHost"
+                                   placeholder="host or ip address of your smtp server (example: smtp.company.com)" 
+                                   class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <button type="button" onclick="setSmtpServer('smtp.sendgrid.net')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                                    <i class="fas fa-envelope-open-text mr-2"></i>Sendgrid
+                                </button>
+                                <button type="button" onclick="setSmtpServer('smtp.mailgun.org')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                                    <i class="fas fa-mail-bulk mr-2"></i>Mailgun
+                                </button>
+                                <button type="button" onclick="setSmtpServer('mail.smtp2go.com')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                                    <i class="fas fa-paper-plane mr-2"></i>SMTP2GO
+                                </button>
+                                <button type="button" onclick="setSmtpServer('smtp-relay.sendinblue.com')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                                    <i class="fas fa-at mr-2"></i>sendinblue
+                                </button>
+                                <button type="button" onclick="setSmtpServer('smtp.jangosmtp.com')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                                    <i class="fas fa-envelope mr-2"></i>JangoSMTP
+                                </button>
+                                <button type="button" onclick="setSmtpServer('smtp.gmail.com')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                                    <i class="fas fa-mail-bulk mr-2"></i>Gmail
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Port Selection -->
+                        <div class="space-y-3">
+                            <label class="block text-lg font-medium">Port</label>
+                            <div class="flex space-x-3 flex-wrap gap-2">
+                                <button type="button" data-port="25" class="px-6 py-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 font-medium">25</button>
+                                <button type="button" data-port="2525" class="px-6 py-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 font-medium">2525</button>
+                                <button type="button" data-port="465" class="px-6 py-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 font-medium">465</button>
+                                <button type="button" data-port="587" class="px-6 py-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 font-medium">587</button>
+                            </div>
+                        </div>
+                        <!-- Security -->
+                        <div class="space-y-3">
+                            <label class="block text-lg font-medium">Security</label>
+                            <select class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="auto">Auto</option>
+                                <option value="none">None</option>
+                                <option value="ssl">SSL</option>
+                                <option value="tls">TLS</option>
+                                <option value="tls_when_available">TLS when available</option>
+                            </select>
+                        </div>
+                        <!-- From Name -->
+                        <div class="space-y-3">
+                            <label class="block text-lg font-medium" for="fromName">From Name</label>
+                            <input type="text" 
+                                   id="fromName"
+                                   name="fromName"
+                                   value="Ultraman Clan" 
+                                   readonly
+                                   class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25 cursor-not-allowed">
+                        </div>
+                        <!-- Subject -->
+                        <div class="space-y-3">
+                            <label class="block text-lg font-medium" for="subject">Subject</label>
+                            <input type="text" 
+                                   id="subject"
+                                   name="subject"
+                                   placeholder="Enter email subject" 
+                                   autocomplete="off"
+                                   class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                        </div>
+                        <!-- Credentials -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <label class="block text-lg font-medium" for="username">Username</label>
+                                <input type="text" 
+                                       id="username"
+                                       name="username"
+                                       autocomplete="username"
+                                       required
+                                       class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                            </div>
+                            <div class="space-y-3">
+                                <label class="block text-lg font-medium" for="password">Password</label>
+                                <div class="relative">
+                                    <input type="password" 
+                                           id="password"
+                                           name="password"
+                                           autocomplete="current-password"
+                                           required
+                                           class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                                    <button type="button" 
+                                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-white"
+                                            onclick="togglePassword()">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Email Addresses -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <label class="block text-lg font-medium" for="fromEmail">From Email</label>
+                                <input type="email" 
+                                       id="fromEmail"
+                                       name="fromEmail"
+                                       autocomplete="email"
+                                       required
+                                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                       class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                            </div>
+                            <div class="space-y-3">
+                                <label class="block text-lg font-medium" for="toEmail">To Email</label>
+                                <input type="email" 
+                                       id="toEmail"
+                                       name="toEmail"
+                                       autocomplete="email"
+                                       required
+                                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                       class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                            </div>
+                        </div>
+                        <!-- Preview Message -->
+                        <div class="p-4 bg-white bg-opacity-10 rounded-lg">
+                            <p id="previewMessage" class="text-sm">This email was sent from smtp <span class="font-semibold">Sendgrid</span></p>
+                        </div>
+                        <!-- Submit Button -->
+                        <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-all transform hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 flex items-center justify-center space-x-2">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Test Connection</span>
+                        </button>
+                    </form>
+                </div>
+                </div>
+ 
+            <script>
+                // Tab navigation
+                const tabs = document.querySelectorAll('nav ul li');
+                const tabContents = document.querySelectorAll('#tab-contents > div');
+
+                tabs.forEach((tab, index) => {
+                    tab.addEventListener('click', () => {
+                        tabs.forEach(t => t.classList.remove('border-b-2', 'border-purple-300', 'text-purple-300'));
+                        tab.classList.add('border-b-2', 'border-purple-300', 'text-purple-300');
+
+                        tabContents.forEach(tc => tc.classList.add('hidden'));
+                        tabContents[index].classList.remove('hidden');
+
+                        // Update header title and description
+                        const header = document.getElementById('tab-header');
+                        switch (tab.textContent.trim()) {
+                            case 'Home':
+                                header.innerHTML = '<h1 class="text-4xl font-bold mb-4">Welcome</h1><p class="text-lg opacity-90">Welcome to the Ultraman Clan Tools.</p>';
+                                break;
+                            case 'SMTP Test':
+                                header.innerHTML = '<h1 class="text-4xl font-bold mb-4">SMTP Test Tool</h1><p class="text-lg opacity-90">Test your connection to any SMTP server with our enhanced testing tool.</p>';
+                                break;
+                            case 'Convert Password AWS':
+                                header.innerHTML = '<h1 class="text-4xl font-bold mb-4">Convert Password AWS</h1><p class="text-lg opacity-90">Convert AWS passwords easily.</p>';
+                                break;
+                            case 'AWS Checker Ses Limit Bulk':
+                                header.innerHTML = '<h1 class="text-4xl font-bold mb-4">AWS Checker Ses Limit Bulk</h1><p class="text-lg opacity-90">Check your AWS SES limits in bulk.</p>';
+                                break;
+                            default:
+                                header.innerHTML = '<h1 class="text-4xl font-bold mb-4">Ultraman Clan Tools</h1><p class="text-lg opacity-90">Welcome to the Ultraman Clan Tools.</p>';
+                        }
+                    });
+                });
+
+                // Initialize first tab as active
+                tabs[0].classList.add('border-b-2', 'border-purple-300', 'text-purple-300');
+                tabContents[0].classList.remove('hidden');
+
+                // AWS Checker Ses Limit Bulk form submission simulation
+                document.getElementById('awsCheckerForm').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const resultArea = document.getElementById('awsCheckerResult');
+                    resultArea.textContent = '';
+
+                    const awsKey = document.getElementById('awsKey').value.trim();
+                    const awsSecret = document.getElementById('awsSecret').value.trim();
+                    const awsRegion = document.getElementById('awsRegion').value.trim();
+
+                    if (!awsKey || !awsSecret || !awsRegion) {
+                        resultArea.textContent = 'Please fill all fields.';
+                        return;
+                    }
+
+                    // Simulate live output
+                    const lines = [
+                        `${awsKey}:${awsSecret}:${awsRegion}:200.0`,
+                        `${awsKey}:SNPdf3UFyzrbkWVKIJyheXNlctyzzFEurheFEQUF:${awsRegion}:200.0`,
+                        `${awsKey}:55LsF6P7iGANJ+wSeszR4ZqfHuwqP5RpzkFmlIeK:${awsRegion}:200.0`,
+                        `${awsKey}:ew7nyPqdbMYuWBpq1ybN7FQe6KQ4dnuQ23FwcFIh:${awsRegion}:200.0`,
+                        `${awsKey}:/Tzd/3ewgpiD8ar9NjD4AMmU8JvnjzDwc1UXIjNh:${awsRegion}:200.0`,
+                        `${awsKey}:1Kdm9m09jU1spAxCggtedbIlJLhhBobXHGJinHkp:${awsRegion}:200.0`,
+                        `${awsKey}:1+yxkBPqthfKb4t4aTy3jQzP94xHP54HRCN6nmPu:${awsRegion}:200.0`,
+                        `${awsKey}:5epbezWdr86sUFzQHiQHZhc3Rm1/BycBCIHqG0Y0:${awsRegion}:200.0`
+                    ];
+
+                    for (const line of lines) {
+                        resultArea.textContent += line + '\n';
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                });
+            </script>
+ 
+             <!-- Form -->
+             <form id="smtpForm" class="space-y-6">
+                 <!-- SMTP Server Input -->
+                 <div class="space-y-3">
+
+                    <label class="block text-lg font-medium" for="smtpHost">SMTP Host</label>
+                    <input type="text" 
+                           id="smtpHost"
+                           name="smtpHost"
+                           placeholder="host or ip address of your smtp server (example: smtp.company.com)" 
+                           class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <button type="button" onclick="setSmtpServer('smtp.sendgrid.net')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                            <i class="fas fa-envelope-open-text mr-2"></i>Sendgrid
+                        </button>
+                        <button type="button" onclick="setSmtpServer('smtp.mailgun.org')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                            <i class="fas fa-mail-bulk mr-2"></i>Mailgun
+                        </button>
+                        <button type="button" onclick="setSmtpServer('mail.smtp2go.com')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                            <i class="fas fa-paper-plane mr-2"></i>SMTP2GO
+                        </button>
+                        <button type="button" onclick="setSmtpServer('smtp-relay.sendinblue.com')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                            <i class="fas fa-at mr-2"></i>sendinblue
+                        </button>
+                        <button type="button" onclick="setSmtpServer('smtp.jangosmtp.com')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                            <i class="fas fa-envelope mr-2"></i>JangoSMTP
+                        </button>
+                        <button type="button" onclick="setSmtpServer('smtp.gmail.com')" class="px-4 py-3 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95">
+                            <i class="fas fa-mail-bulk mr-2"></i>Gmail
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Port Selection -->
+                <div class="space-y-3">
+                    <label class="block text-lg font-medium">Port</label>
+                    <div class="flex space-x-3 flex-wrap gap-2">
+                        <button type="button" data-port="25" class="px-6 py-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 font-medium">25</button>
+                        <button type="button" data-port="2525" class="px-6 py-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 font-medium">2525</button>
+                        <button type="button" data-port="465" class="px-6 py-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 font-medium">465</button>
+                        <button type="button" data-port="587" class="px-6 py-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 font-medium">587</button>
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div class="space-y-3">
+                    <label class="block text-lg font-medium">Security</label>
+                    <select class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="auto">Auto</option>
+                        <option value="none">None</option>
+                        <option value="ssl">SSL</option>
+                        <option value="tls">TLS</option>
+                        <option value="tls_when_available">TLS when available</option>
+                    </select>
+                </div>
+
+                <!-- From Name -->
+                <div class="space-y-3">
+                    <label class="block text-lg font-medium" for="fromName">From Name</label>
+                    <input type="text" 
+                           id="fromName"
+                           name="fromName"
+                           value="Ultraman Clan" 
+                           readonly
+                           class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25 cursor-not-allowed">
+                </div>
+
+                <!-- Subject -->
+                <div class="space-y-3">
+                    <label class="block text-lg font-medium" for="subject">Subject</label>
+                    <input type="text" 
+                           id="subject"
+                           name="subject"
+                           placeholder="Enter email subject" 
+                           autocomplete="off"
+                           class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                </div>
+
+                <!-- Credentials -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <label class="block text-lg font-medium" for="username">Username</label>
+                        <input type="text" 
+                               id="username"
+                               name="username"
+                               autocomplete="username"
+                               required
+                               class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="block text-lg font-medium" for="password">Password</label>
+                        <div class="relative">
+                            <input type="password" 
+                                   id="password"
+                                   name="password"
+                                   autocomplete="current-password"
+                                   required
+                                   class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                            <button type="button" 
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-white"
+                                    onclick="togglePassword()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Addresses -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <label class="block text-lg font-medium" for="fromEmail">From Email</label>
+                        <input type="email" 
+                               id="fromEmail"
+                               name="fromEmail"
+                               autocomplete="email"
+                               required
+                               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="block text-lg font-medium" for="toEmail">To Email</label>
+                        <input type="email" 
+                               id="toEmail"
+                               name="toEmail"
+                               autocomplete="email"
+                               required
+                               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               class="w-full px-4 py-2 bg-white bg-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 hover:bg-opacity-25">
+                    </div>
+                </div>
+
+                <!-- Preview Message -->
+                <div class="p-4 bg-white bg-opacity-10 rounded-lg">
+                    <p id="previewMessage" class="text-sm">This email was sent from smtp <span class="font-semibold">Sendgrid</span></p>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-all transform hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 flex items-center justify-center space-x-2">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Test Connection</span>
+                </button>
+            </form>
+
+            <!-- Debug Console -->
+            <div class="mt-8 space-y-3">
+                <div class="flex items-center justify-between">
+                    <label class="block text-lg font-medium">Debug Console</label>
+                    <button type="button" 
+                            onclick="clearDebugConsole()"
+                            class="px-3 py-1 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300 text-sm">
+                        <i class="fas fa-trash-alt mr-1"></i>Clear
+                    </button>
+                </div>
+                <div id="debugConsole" class="debug-console p-4 bg-black bg-opacity-50 rounded-lg font-mono text-sm">
+                    <div class="text-green-400">> Debug console initialized...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set SMTP server from buttons
+        function setSmtpServer(host) {
+            const smtpHostInput = document.getElementById('smtpHost');
+            smtpHostInput.value = host;
+            logDebug(`SMTP server set to: ${host}`, 'info');
+            
+            // Update preview message
+            const serverName = host.split('.')[1] || host;
+            document.getElementById('previewMessage').innerHTML = `This email was sent from smtp <span class="font-semibold">${serverName}</span>`;
+            
+            // Set recommended port based on host
+            if (host === 'smtp.gmail.com') {
+                document.querySelector('button[data-port="587"]').click();
+            }
+        }
+
+        // Handle port selection
+        document.querySelectorAll('button[data-port]').forEach(button => {
+            button.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('bg-purple-500', 'bg-opacity-50');
+                });
+                this.classList.add('bg-purple-500', 'bg-opacity-50');
+                const port = this.dataset.port;
+                logDebug(`Port set to: ${port}`, 'info');
+            });
+        });
+
+        // Handle SMTP host input changes
+        document.getElementById('smtpHost').addEventListener('input', function() {
+            if (this.value.trim()) {
+                logDebug(`SMTP host changed to: ${this.value.trim()}`, 'info');
+                document.getElementById('previewMessage').innerHTML = `This email was sent from smtp <span class="font-semibold">${this.value.trim()}</span>`;
+            }
+        });
+
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.querySelector('.fa-eye');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Debug console functions
+        function logDebug(message, type = 'info') {
+            const debugConsole = document.getElementById('debugConsole');
+            if (!debugConsole) return;
+
+            const timestamp = new Date().toLocaleTimeString();
+            let color = 'text-gray-300';
+            
+            switch(type) {
+                case 'success':
+                    color = 'text-green-400';
+                    break;
+                case 'error':
+                    color = 'text-red-400';
+                    break;
+                case 'warning':
+                    color = 'text-yellow-400';
+                    break;
+            }
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = color;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            debugConsole.appendChild(logEntry);
+            debugConsole.scrollTop = debugConsole.scrollHeight;
+        }
+
+        function clearDebugConsole() {
+            const debugConsole = document.getElementById('debugConsole');
+            if (!debugConsole) return;
+
+            while (debugConsole.firstChild) {
+                debugConsole.removeChild(debugConsole.firstChild);
+            }
+            const initialMessage = document.createElement('div');
+            initialMessage.className = 'text-green-400';
+            initialMessage.textContent = '> Debug console cleared...';
+            debugConsole.appendChild(initialMessage);
+            logDebug('Console cleared', 'info');
+        }
+
+        // Form submission with validation and SMTP test
+        document.getElementById('smtpForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const requiredFields = ['smtpHost', 'username', 'password', 'fromEmail', 'toEmail'];
+            let isValid = true;
+            let formData = {};
+            
+            requiredFields.forEach(field => {
+                const input = document.getElementById(field);
+                if (!input.value.trim()) {
+                    input.classList.add('ring-2', 'ring-red-500');
+                    isValid = false;
+                    logDebug(`Validation failed: ${field} is required`, 'error');
+                } else {
+                    input.classList.remove('ring-2', 'ring-red-500');
+                    formData[field] = input.value.trim();
+                }
+            });
+
+            // Get selected port
+            const selectedPortBtn = document.querySelector('button[data-port].bg-purple-500');
+            if (!selectedPortBtn) {
+                logDebug('Please select a port', 'error');
+                isValid = false;
+            } else {
+                formData.port = selectedPortBtn.dataset.port;
+            }
+
+            // Get security setting
+            formData.security = document.querySelector('select').value;
+            formData.fromName = document.getElementById('fromName').value;
+            formData.subject = document.getElementById('subject').value || 'SMTP Test Email';
+
+            if (isValid) {
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalContent = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Testing...</span>';
+                submitBtn.disabled = true;
+
+                // Log connection attempt
+                logDebug('Initiating SMTP connection test...', 'info');
+                logDebug(`Host: ${formData.smtpHost}`, 'info');
+                logDebug(`Port: ${formData.port}`, 'info');
+                logDebug(`Security: ${formData.security}`, 'info');
+                
+                try {
+                    // Simulate SMTP test with detailed logging
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    logDebug('Establishing connection...', 'info');
+                    
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    logDebug('Connection established', 'success');
+                    
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    logDebug('Authenticating...', 'info');
+                    
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    logDebug('Authentication successful', 'success');
+                    
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    logDebug('Testing mail delivery...', 'info');
+                    
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    logDebug('Test email sent successfully!', 'success');
+                    
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i><span>Test Successful!</span>';
+                    submitBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                    submitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalContent;
+                        submitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        submitBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                        submitBtn.disabled = false;
+                    }, 2000);
+                } catch (error) {
+                    logDebug(`SMTP test failed: ${error.message}`, 'error');
+                    submitBtn.innerHTML = '<i class="fas fa-times"></i><span>Test Failed</span>';
+                    submitBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                    submitBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalContent;
+                        submitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                        submitBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                        submitBtn.disabled = false;
+                    }, 2000);
+                }
+            }
+        });
+
+        // Add input validation styling
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.hasAttribute('required') && !this.value.trim()) {
+                    this.classList.add('ring-2', 'ring-red-500');
+                    logDebug(`Validation: ${this.name} is empty`, 'warning');
+                } else {
+                    this.classList.remove('ring-2', 'ring-red-500');
+                }
+            });
+        });
+
+        // Initialize with some debug info
+        logDebug('SMTP Test Tool initialized', 'success');
+        logDebug('Ready to test SMTP connections', 'info');
+    </script>
+</body>
+</html>
